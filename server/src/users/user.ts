@@ -5,6 +5,10 @@ import { prisma } from "../lib/prisma.js";
 
 const router = Router();
 
+router.get("/health", function(req: Request, res: Response){
+    res.status(200).json({message: "User Router Running"});
+});
+
 router.post("/signup", async function(req: Request, res: Response){
     const userInput = req.body;
     const validInput = userSignupSchema.safeParse(userInput);
@@ -47,6 +51,16 @@ router.post("/signin", async function(req: Request, res: Response){
     }
 
     res.status(200).json({message: "Login Success", user })
+});
+
+router.get("/get-users", async function(req: Request, res: Response){
+    
+    try{
+    const users = await prisma.user.findMany({});
+    res.status(200).json({users: users });
+    }catch(e){
+        res.status(404).json({message: "Error fetching users", Error: e});
+    }
 });
 
 export default router;
